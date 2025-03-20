@@ -11,6 +11,9 @@ from rich.panel import Panel
 from rich.text import Text
 #from rich_pixels import Pixels
 from rich.console import Console
+from datetime import datetime
+
+
 
 class Libro():
     def __init__(self,nombre,editorial,autor,fecha_publi,isbn):
@@ -50,7 +53,9 @@ class Biblioteca():
     # Funcion para mostar clientes
     def mostra_clientes(self):
         for cliente in self.clientes.values():
-            print(cliente)
+            console.print(f"Dni {cliente.dni}\t Nombre{cliente.nombre}")
+        input()
+            
 
     
 
@@ -61,7 +66,7 @@ system("cls")
 
 
 menu="""
-[#C0C0C0]
+[#5d6d7e]
 
                            ▄████████         ▄████████       ▄████████         ▄████████      ███▄▄▄▄           ▄████████ 
                           ███    ███        ███    ███      ███    ███        ███    ███      ███▀▀▀██▄        ███    ███ 
@@ -124,65 +129,85 @@ menu_principal = Panel(
 )
 #Instanciamos la clase bibloteca
 arcana = Biblioteca()
-console.print(titulo)
+
+
+
+
+
 # Bucle principal
-while True:
-    # Cada vuelta mostramos el menu principal
-    console.print(menu_principal)
-    
-    # Pregutamos que quiere hacer
-    opcion = int(input('Seleciona una opcion'))
+def main():
+    console.print(titulo)
+    while True:
+        # Cada vuelta mostramos el menu principal
+        console.print(menu_principal)
+        
+        # Pregutamos que quiere hacer
+        opcion = int(input('Seleciona una opcion'))
 
-    if opcion == 1: # Opcion de añadir libro --------------------------------------------------------------------------------------------
-        while True:
-            system('cls') # Borramos pantalla
+        if opcion == 1: # Opcion de añadir libro --------------------------------------------------------------------------------------------
+            while True:
+                system('cls') # Borramos pantalla
 
-            console.print('Añadir libro')# Le mostramos en que menu estamos
-            
-            # Le pedimos todos los datos necesarios
-            nombre_libro = input('Introduce el nombre del libro: ')
-            editorail = input('Intrpduce la editorial del libro: ')
-            autor = input('Intrpduce el autor del libro: ')
-            fecha_publi = input('Introduce la fecha de salida del libro: ')
-            isbn = input('Introduce el ISBN: ')
+                console.print('Añadir libro')# Le mostramos en que menu estamos
+                
+                # Le pedimos todos los datos necesarios
+                nombre_libro = input('Introduce el nombre del libro: ')
+                editorail = input('Intrpduce la editorial del libro: ')
+                autor = input('Intrpduce el autor del libro: ')
+                fecha_publi = input('Introduce la fecha de salida del libro: ')
+                isbn = input('Introduce el ISBN: ')
 
-            # Instanciamos una clase 
-            
-            
+                # Instanciamos una clase 
+                
+                
 
-    elif opcion == 2: # Opcion de prestar libro -----------------------------------------------------------------------------------------
-        console.print('Prestar libro') 
+        elif opcion == 2: # Opcion de prestar libro -----------------------------------------------------------------------------------------
+            console.print('Prestar libro') 
 
-    elif opcion == 3: # Opcion de devolver libro  ---------------------------------------------------------------------------------------
-        console.print('Devolver libro') 
+        elif opcion == 3: # Opcion de devolver libro  ---------------------------------------------------------------------------------------
+            console.print('Devolver libro') 
 
-    elif opcion == 4: # Mostrar libros disponibles ---------------------------------------------------------------------------------------
-        console.print('Mostar libros disponibles') 
+        elif opcion == 4: # Mostrar libros disponibles ---------------------------------------------------------------------------------------
+            console.print('Mostar libros disponibles') 
 
-    elif opcion == 5: # Mostrar libros prestado  -----------------------------------------------------------------------------------------
-        console.print('Libros prestados')
+        elif opcion == 5: # Mostrar libros prestado  -----------------------------------------------------------------------------------------
+            console.print('Libros prestados')
 
-    elif opcion == 6: # Registro de usuarios  -----------------------------------------------------------------------------------------
-        console.print('Registrar usuarios')
-        # dni,nombre,fecha_nac,tlf,correo_electronico
-        dni = input('Introduce el dni del cliente a registrar: ')
-        nombre = input('Introduce el nombre del cliente a registrar: ')
-        fecha_nac = input('Introduce la fecha de nacimiento del cliente: ')
-        tlf = int(input('Introduce el numero de telefono del cliente: '))
-        correo_electronico = input('Introduce el correo electronico del cliente: ')
+        elif opcion == 6: # Registro de usuarios  -----------------------------------------------------------------------------------------
+            console.print('Registrar usuarios')
+            # dni,nombre,fecha_nac,tlf,correo_electronico
+            while True:
+                try:
+                    dni = input('Introduce el dni del cliente a registrar: ')
+                    nombre = input('Introduce el nombre del cliente a registrar: ')
+                    while True:
+                        try:
+                            fecha_nac = input('Introduce la fecha de nacimiento del cliente: ')
+                            datetime.strptime(fecha_nac, '%d-%m-%Y')
+                            print("Fecha válida")
+                            break
+                        except:
+                            print("Fecha inválida")
+                            continue
+                    tlf = int(input('Introduce el numero de telefono del cliente: '))
+                    correo_electronico = input('Introduce el correo electronico del cliente: ')
+                    break
+                except:
+                    console.input("Las datos introducidos no son correctos")
+                    continue
+            arcana.agregar_cliente(dni,nombre,fecha_nac,tlf,correo_electronico)
+        elif opcion == 7: # Mostrar usuarios registrados  ------------------------------------------------------------------------------------
+            console.print('Mostar usuarios registrados')
+            arcana.mostra_clientes()
+            input()
+        elif opcion == 8: # Eliminar usuario  -----------------------------------------------------------------------------------------
+            console.print('Eliminar usuario')
 
-        arcana.agregar_cliente(dni,nombre,fecha_nac,tlf,correo_electronico)
-    elif opcion == 7: # Mostrar usuarios registrados  ------------------------------------------------------------------------------------
-        console.print('Mostar usuarios registrados')
-        arcana.mostra_clientes()
-        input()
-    elif opcion == 8: # Eliminar usuario  -----------------------------------------------------------------------------------------
-        console.print('Eliminar usuario')
+        elif opcion == 9: # Salida del programa  -----------------------------------------------------------------------------------------
+            console.input('Muchas gracias por usar el programa')
+        else:
+            console.input('Opcion no valida pulsa enter para coninuar')
+        system("cls")
 
-    elif opcion == 9: # Salida del programa  -----------------------------------------------------------------------------------------
-        console.input('Muchas gracias por usar el programa')
-    else:
-        console.input('Opcion no valida pulsa enter para coninuar')
-    system("cls")
-
-
+if __name__ == "__main__":
+    main()
