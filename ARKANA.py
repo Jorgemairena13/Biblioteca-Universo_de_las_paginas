@@ -33,17 +33,6 @@ class Cliente():
         self.tlf = tlf
         self.correo_electronico = correo_electronico
 
-# Clase prestamos para cuando queramos prestar libros
-class Prestamo():
-
-    def __init__(self,dni,nombre,nombre_libro, fecha_prestamo, fecha_devolucion):
-        self.dni = dni
-        self.usuario = nombre
-        self.libro = nombre_libro
-        self.fecha_prestamo = fecha_prestamo
-        self.fecha_devolucion = fecha_devolucion
-
-
 class Biblioteca():
 
     def __init__(self):
@@ -54,7 +43,6 @@ class Biblioteca():
         
     #Funcion para añadir libro -------------------------------------------------------------------------------------------------
     def añadir_libro(self,nombre,editorial,autor,fecha_publi,isbn):
-        
         # Comprobamos que el libro no se duplique
         if nombre not in self.libros:
             #Creamos una insancia del libro y la guardamos con la clave del nombre del libro
@@ -70,32 +58,51 @@ class Biblioteca():
     def mostrar_libros(self): 
         if self.libros:
             for libro in self.libros.values():
-                print(f"Nombre {libro.nombre}\tEditorial {libro.editorial}\tAutor {libro.autor}\tFecha publicacion {libro.fecha_publi}\tISBN {libro.isbn}")
-                input()
+                if libro.disponible:
+                    print(f"Nombre {libro.nombre}\tEditorial {libro.editorial}\tAutor {libro.autor}\tFecha publicacion {libro.fecha_publi}\tISBN {libro.isbn}")
+                    input()
         else:
             input("No hay libros registrados\n\nPulsa enter para continuar")
 
     #Funcion para prestar libro ---------------------------------------------------------------------------------------------------
-    def prestar_libro(self,dni,nombre,nombre_libro, fecha_prestamo, fecha_devolucion):
-
-        self.prestados[dni] = Prestamo(dni,nombre,nombre_libro,fecha_prestamo,fecha_devolucion)
-        input()
-        del self.libros[nombre]
-    
+    def prestar_libro(self, dni, nombre_libro):
+        if nombre_libro in self.libros and dni in self.clientes:
+            if nombre_libro not in self.prestados and self.libros[nombre_libro].disponible:
+                # Obtenemos el nombre del cliente
+                nombre_cliente = self.clientes[dni].nombre
+                
+                # Guardamos DNI, nombre del cliente y nombre del libro
+                self.prestados[nombre_libro] = (dni, nombre_cliente, nombre_libro)
+                self.libros[nombre_libro].disponible = False
+                
+                system('cls')
+                console.print(f'Libro "{nombre_libro}" prestado correctamente a {nombre_cliente}')
+                input("Pulsa enter para continuar")
+                system('cls')
+            else:
+                console.input('El libro ya está prestado')
+        else:
+            console.input('El libro o el usuario no existen')
+        
+        
+    # Mostramos los libros prestado ----------------------------------------------------------------
     def mostrar_libros_prestados(self):
         if self.prestados:
-            for libro in self.prestados.values():
-                print(f"{libro.nombre}")
+            for nombre_libro, (dni, nombre_cliente, _) in self.prestados.items():
+                print(f"Libro: {nombre_libro} - Prestado a: {nombre_cliente} (DNI: {dni})")
+            input("Pulsa enter para continuar")
         else:
             input("No hay libros prestados\n\nPulsa enter para continuar")
 
-    # Funcion para devolver libro ---------------------------------------------------------------------------------------------------
-    def devolver_libro(self):
-        pass
+    # Funcion para devolver libro ---------------------------------------------------------------------------------------------------+++++++++++++++++++
+    def devolver_libro(self,nombre_libro):
+        if self.prestados:
+            del self.prestados[nombre_libro]
+            self.libros[nombre_libro].disponible = True
+            prompt('Libro devuelto correctamente')
+        else:
+            prompt('No hay libros prestados')
 
-    
-
-    
     # Funcion para agregar clientes ----------------------------------------------------------------------------------------------
     def agregar_cliente(self,dni,nombre,fecha_nac,tlf,correo_electronico):
         if dni not in self.clientes:
@@ -104,38 +111,40 @@ class Biblioteca():
             console.print(f"Usuario {nombre} registrado correctamente")
             input("Pulsa enter para continuar")
             system("cls")
+        else:
+            console.input('El dni ya esta regitrado')
 
     # Funcion para mostar clientes ------------------------------------------------------------------------------------------------
     def mostrar_clientes(self):
         for cliente in self.clientes.values():
-            console.print(f"Dni {cliente.dni}\t Nombre {cliente}")
+            console.print(f"Dni {cliente.dni}\t Nombre {cliente.nombre}")
         input()
+    
+    # Funcion para eliminar usuario --------------------------------------------------------------------------------------------------+++++++++++++++++++++
+    def eliminar_usuario(self):
+        pass
     
 console = Console()
 console.input('Poner en pantalla completa para visualizar correctamete')
 system("cls")
 
-
 menu="""
 [#5d6d7e]
 
-                           ▄████████         ▄████████       ▄████████         ▄████████      ███▄▄▄▄           ▄████████ 
-                          ███    ███        ███    ███      ███    ███        ███    ███      ███▀▀▀██▄        ███    ███ 
-                          ███    ███        ███    ███      ███    █▀         ███    ███      ███   ███        ███    ███ 
-                          ███    ███       ▄███▄▄▄▄██▀      ███               ███    ███      ███   ███        ███    ███ 
-                        ▀███████████      ▀▀███▀▀▀▀▀        ███             ▀███████████      ███   ███      ▀███████████   
-                          ███    ███      ▀███████████      ███    █▄         ███    ███      ███   ███        ███    ███ 
-                          ███    ███        ███    ███      ███    ███        ███    ███      ███   ███        ███    ███ 
-                          ███    █▀         ███    ███      ████████▀         ███    █▀        ▀█   █▀         ███    █▀  
-                                            ███    ███                                                                    
-
-                                             
-                                                                                                                                                                                              
-
+                          
+            ▄████████         ▄████████         ▄█   ▄█▄         ▄████████      ███▄▄▄▄           ▄████████ 
+           ███    ███        ███    ███        ███ ▄███▀        ███    ███      ███▀▀▀██▄        ███    ███ 
+           ███    ███        ███    ███        ███▐██▀          ███    ███      ███   ███        ███    ███ 
+           ███    ███       ▄███▄▄▄▄██▀       ▄█████▀           ███    ███      ███   ███        ███    ███ 
+         ▀███████████      ▀▀███▀▀▀▀▀        ▀▀█████▄         ▀███████████      ███   ███      ▀███████████ 
+           ███    ███      ▀███████████        ███▐██▄          ███    ███      ███   ███        ███    ███ 
+           ███    ███        ███    ███        ███ ▀███▄        ███    ███      ███   ███        ███    ███ 
+           ███    █▀         ███    ███        ███   ▀█▀        ███    █▀        ▀█   █▀         ███    █▀  
+                             ███    ███        ▀                                                                                                    
 [/]                                                                                                                                                                            
 """
 menu2 = """
-[#14effd ]
+[#90CAF9 ]
 ╔════════════════════════════════════════════════════════╗
 ║   [bold #ccf2ec]                 ░▒▓ BIBLIOTECA ▓▒░ [/]                 ║
 ║   [#ccf2ec]          █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█[/]            ║
@@ -151,10 +160,10 @@ menu2 = """
 ║[#fda114]  ➤ 4. Libros Disponibles [/]                              ║
 ║[#fda114]  ➤ 5. Libros Prestados   [/]                              ║
 ╠════════════════════════════════════════════════════════╣
-║   [bold #fe00e7]            👥 MENU USUARIOS    [/]                     ║
-║[#fd1477]  ➤ 6. Registrar Usuario  [/]                              ║
-║[#fd1477]  ➤ 7. Usuarios Registrados [/]                            ║
-║[#fd1477]  ➤ 8. Eliminar Usuario [/]                                ║
+║   [bold #E3608C]            👥 MENU USUARIOS    [/]                     ║
+║[#EF94B3]  ➤ 6. Registrar Usuario  [/]                              ║
+║[#EF94B3]  ➤ 7. Usuarios Registrados [/]                            ║
+║[#EF94B3]  ➤ 8. Eliminar Usuario [/]                                ║
 ╠════════════════════════════════════════════════════════╣
 ║[#af14fd]               ❯ 9. SALIR    [/]                           ║
 ╚════════════════════════════════════════════════════════╝
@@ -206,33 +215,39 @@ def main():
         elif opcion == 2: # Opcion de prestar libro -----------------------------------------------------------------------------------------
             console.print('Prestar libro') 
             dni = prompt('Introduce el dni del cliente para prestar: ')
-            nombre = prompt('Introduce el nombre del cliente').capitalize()
+            
             nombre_libro = prompt('Introduce el nombre del libro a prestar').capitalize()
-            fecha_prestamo = prompt('Introduce la fecha del prestamo')
-            fecha_devolucion = prompt('Introduce la fecha de devolucion')
-            arcana.prestar_libro(dni,nombre,nombre_libro, fecha_prestamo, fecha_devolucion)
+            
+            arcana.prestar_libro(dni,nombre_libro)
 
         elif opcion == 3: # Opcion de devolver libro  ---------------------------------------------------------------------------------------
-            console.print('Devolver libro') 
+            console.print('Devolver libro')
+            nombre_libro = prompt('Introduce el nombre del libro a devolver').capitalize()
+            arcana.devolver_libro(nombre_libro)
 
         elif opcion == 4: # Mostrar libros disponibles ---------------------------------------------------------------------------------------
             console.print('Mostar libros disponibles') 
             arcana.mostrar_libros()
+
         elif opcion == 5: # Mostrar libros prestado  -----------------------------------------------------------------------------------------
             console.print('Libros prestados')
+            arcana.mostrar_libros_prestados()
 
         elif opcion == 6: # Registro de usuarios  -----------------------------------------------------------------------------------------
             console.print('Registrar usuarios')
-        
+
+            # Bucle para pedir datos
             while True:
                 try:
                     dni = input('Introduce el dni del cliente a registrar: ')
                     nombre = input('Introduce el nombre del cliente a registrar: ').capitalize()
+                    
+                    # Bucele para validar la fecha en el formato correcto
                     while True:
                         try:
-                            fecha_nac = input('Introduce la fecha de nacimiento del cliente: ')
-                            datetime.strptime(fecha_nac, '%d-%m-%Y')
-                            print("Fecha válida")
+                            fecha_nac = input('Introduce la fecha de nacimiento del cliente [dia/mes/año]: ')
+                            datetime.strptime(fecha_nac, '%d/%m/%Y')
+                            
                             break
                         except:
                             print("Fecha inválida")
@@ -253,7 +268,7 @@ def main():
 
         elif opcion == 8: # Eliminar usuario  -----------------------------------------------------------------------------------------
             console.print('Eliminar usuario')
-
+            arcana.eliminar_usuario()
         elif opcion == 9: # Salida del programa  -----------------------------------------------------------------------------------------
             console.input('Muchas gracias por usar el programa')
 
