@@ -192,10 +192,18 @@ def main():
     console.print(titulo)
     while True:
         # Cada vuelta mostramos el menu principal
-        console.print(menu_principal)
+        
         
         # Pregutamos que quiere hacer
-        opcion = int(input('Seleciona una opcion: '))
+        while True:
+            system("cls")
+            try:
+                console.print(menu_principal)
+                opcion = int(input('Seleciona una opcion: '))
+                break
+            except:
+                console.input("Introduce una opcion correcta")
+                continue
 
         if opcion == 1: # Opcion de añadir libro --------------------------------------------------------------------------------------------
             while True:
@@ -282,6 +290,7 @@ def main():
             
         elif opcion == 9: # Salida del programa  -----------------------------------------------------------------------------------------
             console.input('Muchas gracias por usar el programa')
+            break
 
         else:
             console.input('Opcion no valida pulsa enter para coninuar')
