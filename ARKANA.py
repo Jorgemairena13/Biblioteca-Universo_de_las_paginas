@@ -118,11 +118,15 @@ class Biblioteca():
     def mostrar_clientes(self):
         for cliente in self.clientes.values():
             console.print(f"Dni {cliente.dni}\t Nombre {cliente.nombre}")
-        input()
+        
     
     # Funcion para eliminar usuario --------------------------------------------------------------------------------------------------+++++++++++++++++++++
-    def eliminar_usuario(self):
-        pass
+    def eliminar_usuario(self,dni):
+        if self.clientes:
+            del self.clientes[dni]
+            prompt("Usuario eliminado correctamente")
+        else:
+            prompt("No hay usuarios registrados")
     
 console = Console()
 console.input('Poner en pantalla completa para visualizar correctamete')
@@ -267,8 +271,15 @@ def main():
             input()
 
         elif opcion == 8: # Eliminar usuario  -----------------------------------------------------------------------------------------
-            console.print('Eliminar usuario')
-            arcana.eliminar_usuario()
+            if arcana.clientes:
+                console.print('Eliminar usuario')
+                console.print("Clientes a eliminar")
+                arcana.mostrar_clientes()
+                dni = prompt("Introduce el DNI del usuario a eliminar")
+                arcana.eliminar_usuario(dni)
+            else:
+                prompt("No hay usuarios registrados")
+            
         elif opcion == 9: # Salida del programa  -----------------------------------------------------------------------------------------
             console.input('Muchas gracias por usar el programa')
 
