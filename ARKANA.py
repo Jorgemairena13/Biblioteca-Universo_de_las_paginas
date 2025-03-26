@@ -9,7 +9,8 @@ from os import system
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
-#from rich_pixels import Pixels
+from rich.table import Table
+from prompt_toolkit.completion import WordCompleter
 from rich.console import Console
 from datetime import datetime
 
@@ -58,8 +59,15 @@ class Biblioteca():
     def mostrar_libros(self): 
         if self.libros:
             for libro in self.libros.values():
+                tabla = Table(title = "Libros disponibles",expand=True,)
+                tabla.add_column("Nombre libro")
+                tabla.add_column("Editorial")
+                tabla.add_column("Autor")
+                tabla.add_column("Fecha publicacion")
+                tabla.add_column("ISBN")
                 if libro.disponible:
-                    print(f"Nombre {libro.nombre}\tEditorial {libro.editorial}\tAutor {libro.autor}\tFecha publicacion {libro.fecha_publi}\tISBN {libro.isbn}")
+                    tabla.add_row(libro.nombre,libro.editorial,libro.autor,libro.fecha_publi,libro.isbn)
+                    console.print(tabla)
                     input()
         else:
             input("No hay libros registrados\n\nPulsa enter para continuar")
@@ -88,8 +96,13 @@ class Biblioteca():
     # Mostramos los libros prestado ----------------------------------------------------------------
     def mostrar_libros_prestados(self):
         if self.prestados:
+            tabla = Table(title = "Libros prestados",expand=True,)
+            tabla.add_column("Dni")
+            tabla.add_column("Nombre")
+            tabla.add_column("Nombre libro")
             for nombre_libro, (dni, nombre_cliente, _) in self.prestados.items():
-                print(f"Libro: {nombre_libro} - Prestado a: {nombre_cliente} (DNI: {dni})")
+                tabla.add_row(dni,nombre_cliente,nombre_libro)
+            console.print(tabla)
             input("Pulsa enter para continuar")
         else:
             input("No hay libros prestados\n\nPulsa enter para continuar")
@@ -116,10 +129,17 @@ class Biblioteca():
 
     # Funcion para mostar clientes ------------------------------------------------------------------------------------------------
     def mostrar_clientes(self):
-        for cliente in self.clientes.values():
-            console.print(f"Dni {cliente.dni}\t Nombre {cliente.nombre}")
         
-    
+        tabla = Table(title = "Clientes",expand=True,)
+        tabla.add_column("DNI")
+        tabla.add_column("Nombre")
+        tabla.add_column("Fecha nacimiento")
+        tabla.add_column("Telefono")
+        tabla.add_column("Correo electronico")
+        for cliente in self.clientes.values():
+            tabla.add_row(cliente.dni,cliente.nombre,cliente.fecha_nac,str(cliente.tlf),cliente.tlf,cliente.correo_electronico)
+        console.print(tabla)
+        input()
     # Funcion para eliminar usuario --------------------------------------------------------------------------------------------------+++++++++++++++++++++
     def eliminar_usuario(self,dni):
         if self.clientes:
@@ -191,8 +211,6 @@ arcana = Biblioteca()
 def main():
     console.print(titulo)
     while True:
-        # Cada vuelta mostramos el menu principal
-        
         
         # Pregutamos que quiere hacer
         while True:
@@ -202,7 +220,7 @@ def main():
                 opcion = int(input('Seleciona una opcion: '))
                 break
             except:
-                console.input("Introduce una opcion correcta")
+                console.input(Panel('Opcion no valida pulsa enter para coninuar',border_style="red"))
                 continue
 
         if opcion == 1: # Opcion de añadir libro --------------------------------------------------------------------------------------------
@@ -234,7 +252,8 @@ def main():
 
         elif opcion == 3: # Opcion de devolver libro  ---------------------------------------------------------------------------------------
             console.print('Devolver libro')
-            nombre_libro = prompt('Introduce el nombre del libro a devolver').capitalize()
+            libros_devolver = WordCompleter(arcana.prestados)
+            nombre_libro = prompt('Introduce el nombre del libro a devolver',completer = libros_devolver).capitalize()
             arcana.devolver_libro(nombre_libro)
 
         elif opcion == 4: # Mostrar libros disponibles ---------------------------------------------------------------------------------------
@@ -265,7 +284,7 @@ def main():
                             print("Fecha inválida")
                             continue
 
-                    tlf = int(input('Introduce el numero de telefono del cliente: '))
+                    tlf = input('Introduce el numero de telefono del cliente: ')
                     correo_electronico = input('Introduce el correo electronico del cliente: ')
                     break
                 except:
@@ -283,18 +302,17 @@ def main():
                 console.print('Eliminar usuario')
                 console.print("Clientes a eliminar")
                 arcana.mostrar_clientes()
-                dni = prompt("Introduce el DNI del usuario a eliminar")
+                eliminar_usuario = WordCompleter(arcana.clientes)
+                dni = prompt("Introduce el DNI del usuario a eliminar: ",completer=eliminar_usuario)
                 arcana.eliminar_usuario(dni)
             else:
-                prompt("No hay usuarios registrados")
+                console.input(Panel("No hay clientes registrados",border_style="yellow",width=30))
             
         elif opcion == 9: # Salida del programa  -----------------------------------------------------------------------------------------
             console.input('Muchas gracias por usar el programa')
             break
 
-        else:
-            console.input('Opcion no valida pulsa enter para coninuar')
-        system("cls")
+        
 
 if __name__ == "__main__":
     main()
