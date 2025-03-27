@@ -14,7 +14,8 @@ import threading
 from time import sleep
 import random
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
-
+from rich.box import Box
+from rich.box import SIMPLE
 
 # Clase libro con todos los atributos que le vamos a pasar
 class Libro():
@@ -37,134 +38,14 @@ class Cliente():
 
 class Biblioteca():
 
+
     def __init__(self):
         # Diccionarios donde se va a ir guardando todo
-        self.libros = {"El Quijote": Libro(
-        nombre="El Quijote",
-        editorial="Espasa",
-        autor="Miguel de Cervantes",
-        fecha_publi="1605",
-        isbn="978-84-670-0523-3"
-    ),
-    "Cien Años de Soledad": Libro(
-        nombre="Cien Años de Soledad",
-        editorial="Sudamericana",
-        autor="Gabriel García Márquez",
-        fecha_publi="1967",
-        isbn="978-987-566-537-5"
-    ),
-    "Harry Potter y la Piedra Filosofal": Libro(
-        nombre="Harry Potter y la Piedra Filosofal",
-        editorial="Bloomsbury",
-        autor="J.K. Rowling",
-        fecha_publi="1997",
-        isbn="978-84-7888-445-2"
-    ),
-    "El Señor de los Anillos": Libro(
-        nombre="El Señor de los Anillos",
-        editorial="Minotauro",
-        autor="J.R.R. Tolkien",
-        fecha_publi="1954",
-        isbn="978-84-450-0168-4"),
-         "1984": Libro(
-        nombre="1984",
-        editorial="Secker & Warburg",
-        autor="George Orwell",
-        fecha_publi="1949",
-        isbn="978-0-452-28423-4"
-    ),
-    "Orgullo y Prejuicio": Libro(
-        nombre="Orgullo y Prejuicio",
-        editorial="T. Egerton",
-        autor="Jane Austen",
-        fecha_publi="1813",
-        isbn="978-0-19-953556-9"
-    ),
-    "Crimen y Castigo": Libro(
-        nombre="Crimen y Castigo",
-        editorial="The Russian Messenger",
-        autor="Fiódor Dostoievski",
-        fecha_publi="1866",
-        isbn="978-84-206-9489-9"
-    ),
-    "Moby-Dick": Libro(
-        nombre="Moby-Dick",
-        editorial="Harper & Brothers",
-        autor="Herman Melville",
-        fecha_publi="1851",
-        isbn="978-0-14-243724-7"
-    ),
-    "Los Juegos del Hambre": Libro(
-        nombre="Los Juegos del Hambre",
-        editorial="Scholastic",
-        autor="Suzanne Collins",
-        fecha_publi="2008",
-        isbn="978-84-204-2361-0"
-    ),
-    "Don Juan Tenorio": Libro(
-        nombre="Don Juan Tenorio",
-        editorial="Juan de la Cuesta",
-        autor="José Zorrilla",
-        fecha_publi="1844",
-        isbn="978-84-376-0492-8"
-    ),
-    "Drácula": Libro(
-        nombre="Drácula",
-        editorial="Archibald Constable and Company",
-        autor="Bram Stoker",
-        fecha_publi="1897",
-        isbn="978-84-339-6744-7"
-    ),
-    "El retrato de Dorian Gray": Libro(
-        nombre="El retrato de Dorian Gray",
-        editorial="Lippincott's Monthly Magazine",
-        autor="Oscar Wilde",
-        fecha_publi="1890",
-        isbn="978-84-376-0493-5"
-    ),
-    "Los Miserables": Libro(
-        nombre="Los Miserables",
-        editorial="A. Lacroix, Verboeckhoven & Cie",
-        autor="Victor Hugo",
-        fecha_publi="1862",
-        isbn="978-84-376-0494-2"
-    ),
-    "Rayuela": Libro(
-        nombre="Rayuela",
-        editorial="Sudamericana",
-        autor="Julio Cortázar",
-        fecha_publi="1963",
-        isbn="978-84-376-0495-9"
-    )
-}
-        
-        
+        self.libros = {}
+        self.clientes = {}
+        self.prestados = {}
 
-        self.clientes = {"12345678A": Cliente(
-        dni="12345678A",
-        nombre="Juan Pérez",
-        fecha_nac="15/03/1990",
-        tlf="600123456",
-        correo_electronico="juan.perez@example.com"
-    ),
-    "87654321B": Cliente(
-        dni="87654321B",
-        nombre="María López",
-        fecha_nac="22/07/1985",
-        tlf="610987654",
-        correo_electronico="maria.lopez@example.com"
-    ),
-    "11223344C": Cliente(
-        dni="11223344C",
-        nombre="Carlos Ramírez",
-        fecha_nac="10/12/1995",
-        tlf="620123789",
-        correo_electronico="carlos.ramirez@example.com"
-    )}
-        self.prestados = {"Cien Años de Soledad": ("12345678A", "Juan Pérez", "Cien Años de Soledad"),
-    "Harry Potter y la Piedra Filosofal": ("87654321B", "María López", "Harry Potter y la Piedra Filosofal")}
-        
-    def animacion_carga(self, mensaje, duracion=3):
+    def animacion_carga_epica(self, mensaje, duracion=3):
         """
         Animación de carga épica con efectos visuales
         """
@@ -180,6 +61,272 @@ class Biblioteca():
             for _ in range(20):
                 sleep(duracion / 20)
                 progress.update(tarea, advance=random.uniform(3, 7))
+    
+    def mostrar_libros_epic_mode(self):
+        """
+        Muestra libros con una presentación épica y dinámica
+        """
+        console = Console()
+        
+        # Animación inicial de carga
+        self.animacion_carga_epica("Desenfundando el catálogo de libros 📚✨")
+        
+        def generar_tabla_epica():
+            # Tabla con efectos visuales
+            tabla = Table(
+                title="🌟 CATÁLOGO MAESTRO DE LIBROS 🌟", 
+                expand=True, 
+                style="bold"
+                
+            )
+            tabla.add_column("🔖 Título", style="cyan bold")
+            tabla.add_column("🏛️ Editorial", style="magenta")
+            tabla.add_column("✍️ Autor", style="green bold")
+            tabla.add_column("📅 Publicación", style="yellow")
+            tabla.add_column("🔢 ISBN", style="red")
+            
+            return tabla, [libro for libro in self.libros.values() if libro.disponible]
+
+        def animacion_entrada_libros(tabla, libros):
+            # Colores de transición
+            colores_transicion = [
+                "bold red", "bold green", "bold blue", 
+                "bold magenta", "bold cyan", "bold yellow"
+            ]
+            
+            for libro in libros:
+                # Efecto de entrada con color aleatorio
+                color_actual = random.choice(colores_transicion)
+                
+                tabla.add_row(
+                    Text(libro.nombre, style=color_actual), 
+                    Text(libro.editorial, style="dim"),
+                    Text(libro.autor, style="italic"),
+                    Text(libro.fecha_publi, style="dim"),
+                    Text(libro.isbn, style="underline")
+                )
+                
+                # Animación de entrada
+                console.print(
+                    Panel(
+                        tabla, 
+                        title="📚 Actualizando Catálogo", 
+                        border_style=color_actual
+                    )
+                )
+                sleep(0.5)  # Tiempo entre entradas
+            
+            return tabla
+
+        def efectos_finales(tabla):
+            # Efectos visuales finales
+            estilos_finales = [
+                Panel(tabla, 
+                      title="🎉 CATÁLOGO COMPLETO", 
+                      border_style="bold green"),
+                Panel(tabla, 
+                      title="✨ LIBROS LISTOS", 
+                      border_style="bold blue"),
+                Panel(tabla, 
+                      title="🚀 DESPEGUE LITERARIO", 
+                      border_style="bold magenta")
+            ]
+            
+            for estilo in estilos_finales:
+                console.print(estilo)
+                sleep(0.5)
+
+        # Generación de la tabla
+        tabla, libros = generar_tabla_epica()
+        
+        if not libros:
+            console.print(
+                Panel(
+                    "[bold red]¡Biblioteca Vacía! 📭",
+                    border_style="red",
+                    expand=False
+                )
+            )
+            return
+        
+        # Tabla final con animación
+        tabla_final = animacion_entrada_libros(tabla, libros)
+        
+        # Efectos de cierre
+        efectos_finales(tabla_final)
+
+    def mostrar_clientes_epic_mode(self):
+        """
+        Muestra clientes con una presentación ultra dinámica
+        """
+        console = Console()
+        
+        # Animación inicial de carga
+        self.animacion_carga_epica("Invocando el registro de clientes 👥🔮")
+        
+        def generar_tabla_epica():
+            tabla = Table(
+            title="🌈 REGISTRO MAESTRO DE CLIENTES 🌈", 
+            expand=True, 
+            style="bold",
+            box=SIMPLE
+        )
+                
+            tabla.add_column("🆔 DNI", style="cyan bold")
+            tabla.add_column("👤 Nombre", style="magenta bold")
+            tabla.add_column("🎂 Nacimiento", style="green")
+            tabla.add_column("📱 Teléfono", style="yellow bold")
+            tabla.add_column("📧 Correo", style="red")
+                
+            return tabla, list(self.clientes.values())
+
+        def animacion_entrada_clientes(tabla, clientes):
+            efectos_visuales = [
+                "bold red", "bold green", "bold blue", 
+                "bold magenta", "bold cyan"
+            ]
+            
+            for cliente in clientes:
+                color = random.choice(efectos_visuales)
+                
+                tabla.add_row(
+                    Text(cliente.dni, style=color), 
+                    Text(cliente.nombre, style="italic " + color),
+                    Text(cliente.fecha_nac, style="dim"),
+                    Text(str(cliente.tlf), style="bold"),
+                    Text(cliente.correo_electronico, style="underline")
+                )
+                
+                console.print(
+                    Panel(
+                        tabla, 
+                        title="👥 Actualizando Registro", 
+                        border_style=color
+                    )
+                )
+                sleep(0.5)
+            
+            return tabla
+
+        def efectos_finales(tabla):
+            transiciones = [
+                ("🎉 REGISTRO COMPLETO", "green"),
+                ("✨ CLIENTES ACTIVADOS", "blue"),
+                ("🚀 SISTEMA ACTUALIZADO", "magenta")
+            ]
+            
+            for titulo, color in transiciones:
+                console.print(
+                    Panel(
+                        tabla, 
+                        title=titulo, 
+                        border_style="bold " + color
+                    )
+                )
+                sleep(0.5)
+
+        # Generación de la tabla
+        tabla, clientes = generar_tabla_epica()
+        
+        if not clientes:
+            console.print(
+                Panel(
+                    "[bold red]¡Registro Vacío! 🕳️",
+                    border_style="red",
+                    expand=False
+                )
+            )
+            return
+        
+        # Tabla final con animación
+        tabla_final = animacion_entrada_clientes(tabla, clientes)
+        
+        # Efectos de cierre
+        efectos_finales(tabla_final)
+
+    def mostrar_prestamos_epic_mode(self):
+        """
+        Muestra préstamos con una presentación ultra dinámica
+        """
+        console = Console()
+        
+        # Animación inicial de carga
+        self.animacion_carga_epica("Desvelando los secretos de los préstamos 📖🔍")
+        
+        def generar_tabla_epica():
+            tabla = Table(
+                title="⚡ REGISTRO DE PRÉSTAMOS ACTIVOS ⚡", 
+                expand=True, 
+                style="bold",
+                box=Box.DOUBLE_EDGE
+            )
+            tabla.add_column("🆔 DNI", style="cyan bold")
+            tabla.add_column("👤 Cliente", style="magenta bold")
+            tabla.add_column("📖 Libro", style="green bold")
+            
+            return tabla, list(self.prestados.values())
+
+        def animacion_entrada_prestamos(tabla, prestamos):
+            efectos_visuales = [
+                "bold red", "bold green", "bold blue", 
+                "bold magenta", "bold yellow"
+            ]
+            
+            for prestamo in prestamos:
+                color = random.choice(efectos_visuales)
+                
+                tabla.add_row(
+                    Text(prestamo[0], style=color), 
+                    Text(prestamo[1], style="italic " + color),
+                    Text(prestamo[2], style="underline bold")
+                )
+                
+                console.print(
+                    Panel(
+                        tabla, 
+                        title="📚 Rastreando Préstamos", 
+                        border_style=color
+                    )
+                )
+                sleep(0.5)
+            
+            return tabla
+
+        def efectos_finales(tabla):
+            transiciones = [
+                ("🎉 PRÉSTAMOS REVELADOS", "green"),
+                ("✨ LIBROS EN MOVIMIENTO", "blue"),
+                ("🚀 SISTEMA ACTUALIZADO", "magenta")
+            ]
+            
+            for titulo, color in transiciones:
+                console.print(
+                    Panel(
+                        tabla, 
+                        title=titulo, 
+                        border_style="bold " + color
+                    )
+                )
+                sleep(0.5)
+
+        # Generación de la tabla
+        tabla, prestamos = generar_tabla_epica()
+        
+        if not prestamos:
+            console.print(
+                Panel(
+                    "[bold red]¡Ningún Préstamo Activo! 📭",
+                    border_style="red",
+                    expand=False
+                )
+            )
+            return
+        
+        # Tabla final con animación
+        tabla_final = animacion_entrada_prestamos(tabla, prestamos)
+        
+        # Efectos de cierre
+        efectos_finales(tabla_final)
         
     #Funcion para añadir libro -------------------------------------------------------------------------------------------------
     def añadir_libro(self,nombre,editorial,autor,fecha_publi,isbn):
@@ -195,39 +342,19 @@ class Biblioteca():
             console.input(Panel('El libro ya esta añadido en la lista',border_style ='yellow'))
     
     # Funcion para mostrar libros -----------------------------------------------------------------------------------------------------
-    def mostrar_libros(self):
-        self.animacion_carga('Desenfundando el catálogo de libros 📚✨')
-
-        # Comprobamos que haya libros
+    def mostrar_libros(self): 
         if self.libros:
-            tabla = Table(
-                title="🌟 CATÁLOGO MAESTRO DE LIBROS 🌟", 
-                expand=True, 
-                style="bold")
-            # Añadimos columnas
-            tabla.add_column("🔖 Título", style="cyan bold")
-            tabla.add_column("🏛️ Editorial", style="magenta")
-            tabla.add_column("✍️ Autor", style="green bold")
-            tabla.add_column("📅 Publicación", style="yellow")
-            tabla.add_column("🔢 ISBN", style="red")
-            
-            # Creamos unas opciones de colores ramdom
-            opciones_colores = [
-                "bold red", "bold green", "bold blue", 
-                "bold magenta", "bold cyan"
-            ]
-            color = random.choice(opciones_colores)
+            tabla = Table(title = "Libros disponibles",expand=True,)
+            tabla.add_column("Nombre libro")
+            tabla.add_column("Editorial")
+            tabla.add_column("Autor")
+            tabla.add_column("Fecha publicacion")
+            tabla.add_column("ISBN")
             for libro in self.libros.values():
                 if libro.disponible:
-                    tabla.add_row(
-                    f"[{color}]{libro.nombre}[/{color}]",  
-                    libro.editorial,
-                    libro.autor,
-                    libro.fecha_publi,
-                    libro.isbn
-                )
-            console.print(tabla)
-            input()
+                    tabla.add_row(libro.nombre,libro.editorial,libro.autor,libro.fecha_publi,libro.isbn)
+                    console.print(tabla)
+                    input()
         else:
             input("No hay libros registrados\n\nPulsa enter para continuar")
 
@@ -456,8 +583,8 @@ def main():
             arcana.agregar_cliente(dni,nombre,fecha_nac,tlf,correo_electronico)
 
         elif opcion == 7: # Mostrar usuarios registrados  ------------------------------------------------------------------------------------
-            console.print('Mostar usuarios registrados')
-            arcana.mostrar_clientes()
+            console.print('👥 Modo Épico: Registro de Clientes')
+            arcana.mostrar_clientes_epic_mode()
             input()
 
         elif opcion == 8: # Eliminar usuario  -----------------------------------------------------------------------------------------
