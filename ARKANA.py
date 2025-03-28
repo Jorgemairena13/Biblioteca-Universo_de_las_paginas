@@ -39,6 +39,7 @@ class Biblioteca():
 
     def __init__(self):
         # Diccionarios donde se va a ir guardando todo
+        # Libros predefinidos para mostra o prestar
         self.libros = {"El Quijote": Libro(
         nombre="El Quijote",
         editorial="Espasa",
@@ -137,9 +138,7 @@ class Biblioteca():
         isbn="978-84-376-0495-9"
     )
 }
-        
-        
-
+        # Datos de clientes ramdom para ver la informacion
         self.clientes = {"12345678A": Cliente(
         dni="12345678A",
         nombre="Juan Pérez",
@@ -161,12 +160,15 @@ class Biblioteca():
         tlf="620123789",
         correo_electronico="carlos.ramirez@example.com"
     )}
+        
+        # Datos ramdom para prestados
         self.prestados = {"Cien Años de Soledad": ("12345678A", "Juan Pérez", "Cien Años de Soledad"),
     "Harry Potter y la Piedra Filosofal": ("87654321B", "María López", "Harry Potter y la Piedra Filosofal")}
         
     def animacion_carga(self, mensaje, duracion=3):
+        system("cls")
         """
-        Animación de carga épica con efectos visuales
+        Animación de carga 
         """
         with Progress(
             SpinnerColumn('aesthetic'),
@@ -316,7 +318,7 @@ console.input('Poner en pantalla completa para visualizar correctamete')
 system("cls")
 
 menu="""
-[#5d6d7e]
+[#7df4f3]
 
                           
             ▄████████         ▄████████         ▄█   ▄█▄         ▄████████      ███▄▄▄▄           ▄████████ 
@@ -372,14 +374,15 @@ arcana = Biblioteca()
 
 # Bucle principal
 def main():
-    console.print(titulo)
+    
     while True:
-        
-        # Pregutamos que quiere hacer
+        system("cls")
         while True:
-            system("cls")
             try:
+                system("cls")
+                console.print(titulo)
                 console.print(menu_principal)
+                # Pregutamos que quiere hacer
                 opcion = int(input('Seleciona una opcion: '))
                 break
             except:
@@ -395,7 +398,16 @@ def main():
                     nombre_libro = input('Introduce el nombre del libro: ').capitalize()
                     editorial = input('Introduce la editorial del libro: ').capitalize()
                     autor = input('Introduce el autor del libro: ').capitalize()
-                    fecha_publi = input('Introduce la fecha de salida del libro: ')
+
+                    while True:
+                        try:
+                            fecha_publi = prompt('Introduce la fecha de publicacion [dia/mes/año]: ')
+                            datetime.strptime(fecha_publi, '%d/%m/%Y')
+                            break
+                        except:
+                            console.print(Panel("[red]\nFecha inválida[/]",border_style="red"))
+                            continue
+
                     isbn = input('Introduce el ISBN: ')
                     arcana.añadir_libro(nombre_libro,editorial,autor,fecha_publi,isbn)
                     break
@@ -407,9 +419,11 @@ def main():
 
         elif opcion == 2: # Opcion de prestar libro -----------------------------------------------------------------------------------------
             console.print('Prestar libro') 
-            dni = prompt('Introduce el dni del cliente para prestar: ')
-            
-            nombre_libro = prompt('Introduce el nombre del libro a prestar').capitalize()
+            # Auto completar con el dni de los clientes
+            clientes = WordCompleter(arcana.clientes)
+            dni = prompt('Introduce el dni del cliente para prestar: ',completer=clientes).upper()
+            libros_disponibles = WordCompleter(arcana.libros)
+            nombre_libro = prompt('Introduce el nombre del libro a prestar: ',completer = libros_disponibles)
             
             arcana.prestar_libro(dni,nombre_libro)
 
