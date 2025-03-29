@@ -7,14 +7,13 @@ from prompt_toolkit.styles import Style
 from os import system
 from rich.text import Text
 from rich.table import Table
-from prompt_toolkit.completion import WordCompleter
+from prompt_toolkit.completion import FuzzyWordCompleter
 from rich.console import Console
 from datetime import datetime
-import threading
+
 from time import sleep
 import random
 from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn
-
 
 # Clase libro con todos los atributos que le vamos a pasar
 class Libro():
@@ -159,6 +158,77 @@ class Biblioteca():
         fecha_nac="10/12/1995",
         tlf="620123789",
         correo_electronico="carlos.ramirez@example.com"
+    ),
+    "11223344C": Cliente(
+        dni="11223344C",
+        nombre="Carlos Ramírez",
+        fecha_nac="10/12/1995",
+        tlf="620123789",
+        correo_electronico="carlos.ramirez@example.com"
+    ),
+
+    "22334455D": Cliente(
+        dni="22334455D",
+        nombre="Ana López",
+        fecha_nac="25/07/1988",
+        tlf="630456123",
+        correo_electronico="ana.lopez@example.com"
+    ),
+    "33445566E": Cliente(
+        dni="33445566E",
+        nombre="Javier Morales",
+        fecha_nac="15/03/1992",
+        tlf="640789321",
+        correo_electronico="javier.morales@example.com"
+    ),
+    "44556677F": Cliente(
+        dni="44556677F",
+        nombre="Laura García",
+        fecha_nac="05/11/1990",
+        tlf="650123456",
+        correo_electronico="laura.garcia@example.com"
+    ),
+    "55667788G": Cliente(
+        dni="55667788G",
+        nombre="Miguel Fernández",
+        fecha_nac="18/05/1985",
+        tlf="660987654",
+        correo_electronico="miguel.fernandez@example.com"
+    ),
+    "66778899H": Cliente(
+        dni="66778899H",
+        nombre="Sofía Martínez",
+        fecha_nac="02/09/1998",
+        tlf="670321654",
+        correo_electronico="sofia.martinez@example.com"
+    ),
+    "77889900J": Cliente(
+        dni="77889900J",
+        nombre="Diego Torres",
+        fecha_nac="12/02/1993",
+        tlf="680654321",
+        correo_electronico="diego.torres@example.com"
+    ),
+    "88990011K": Cliente(
+        dni="88990011K",
+        nombre="Isabel Pérez",
+        fecha_nac="30/06/1996",
+        tlf="690123987",
+        correo_electronico="isabel.perez@example.com"
+    ),
+    "99001122L": Cliente(
+        dni="99001122L",
+        nombre="Pablo Sánchez",
+        fecha_nac="08/04/1991",
+        tlf="610456789",
+        correo_electronico="pablo.sanchez@example.com"
+    ),
+    "00112233M": Cliente(
+        dni="00112233M",
+        nombre="Elena Vargas",
+        fecha_nac="22/08/1994",
+        tlf="620789123",
+        correo_electronico="elena.vargas@example.com"
     )}
         
         # Datos ramdom para prestados
@@ -191,10 +261,10 @@ class Biblioteca():
             self.libros[nombre] = Libro(nombre,editorial,autor,fecha_publi,isbn)
             system('cls')
             console.print(f'Libro añadido {nombre} correctamente')
-            input("Pulsa enter para continuar")
+            prompt("Pulsa enter para continuar",style=style)
             system('cls')
         else:
-            console.input(Panel('El libro ya esta añadido en la lista',border_style ='yellow'))
+            console.input(Panel('El libro ya esta añadido en la lista',border_style ='yellow',width=40))
     
     # Funcion para mostrar libros -----------------------------------------------------------------------------------------------------
     def mostrar_libros(self):
@@ -229,9 +299,9 @@ class Biblioteca():
                     libro.isbn
                 )
             console.print(tabla)
-            input()
+            prompt()
         else:
-            input("No hay libros registrados\n\nPulsa enter para continuar")
+            prompt("No hay libros registrados\n\nPulsa enter para continuar",style=style)
 
     #Funcion para prestar libro ---------------------------------------------------------------------------------------------------
     def prestar_libro(self, dni, nombre_libro):
@@ -245,17 +315,18 @@ class Biblioteca():
                 self.libros[nombre_libro].disponible = False
                 
                 system('cls')
-                console.print(f'Libro "{nombre_libro}" prestado correctamente a {nombre_cliente}')
-                input("Pulsa enter para continuar")
+                console.print(Panel(f'[#27ff58]Libro "{nombre_libro}" prestado correctamente a {nombre_cliente}[/]',border_style='#27ff58',width=40))
+                prompt("Pulsa enter para continuar",style=style)
                 system('cls')
             else:
-                console.input('El libro ya está prestado')
+                console.input(Panel('El libro ya está prestado',border_style='yellow',width=40))
         else:
-            console.input('El libro o el usuario no existen')
+            console.input(Panel('El libro o el usuario no existen',border_style='red',width=40))
         
         
     # Mostramos los libros prestado ----------------------------------------------------------------
     def mostrar_libros_prestados(self):
+        self.animacion_carga('Desempolvando libros prestados... 📚⏰')
         if self.prestados:
             tabla = Table(title = "Libros prestados",expand=True,)
             tabla.add_column("Dni")
@@ -264,18 +335,18 @@ class Biblioteca():
             for nombre_libro, (dni, nombre_cliente, _) in self.prestados.items():
                 tabla.add_row(dni,nombre_cliente,nombre_libro)
             console.print(tabla)
-            input("Pulsa enter para continuar")
+            prompt("Pulsa enter para continuar",style=style)
         else:
-            input("No hay libros prestados\n\nPulsa enter para continuar")
+            prompt("No hay libros prestados\n\nPulsa enter para continuar",style=style)
 
     # Funcion para devolver libro ---------------------------------------------------------------------------------------------------+++++++++++++++++++
     def devolver_libro(self,nombre_libro):
         if self.prestados and nombre_libro in self.prestados:
             del self.prestados[nombre_libro]
             self.libros[nombre_libro].disponible = True
-            prompt('Libro devuelto correctamente')
+            prompt('Libro devuelto correctamente',style=style)
         else:
-            prompt('No hay libros prestados')
+            prompt('No hay libros prestados',style=style)
 
     # Funcion para agregar clientes ----------------------------------------------------------------------------------------------
     def agregar_cliente(self,dni,nombre,fecha_nac,tlf,correo_electronico):
@@ -283,13 +354,14 @@ class Biblioteca():
             self.clientes[dni] = Cliente(dni,nombre,fecha_nac,tlf,correo_electronico)
             system("cls")
             console.print(f"Usuario {nombre} registrado correctamente")
-            input("Pulsa enter para continuar")
+            prompt("Pulsa enter para continuar",style=style)
             system("cls")
         else:
-            console.input('El dni ya esta regitrado')
+            console.input(Panel('El dni ya esta regitrado',border_style='red',width=40))
 
     # Funcion para mostar clientes ------------------------------------------------------------------------------------------------
     def mostrar_clientes(self):
+        self.animacion_carga('Revisando el listado de clientes... 👥📚')
         
         tabla = Table(title = "Clientes",expand=True,)
         tabla.add_column("DNI")
@@ -300,36 +372,44 @@ class Biblioteca():
         for cliente in self.clientes.values():
             tabla.add_row(cliente.dni,cliente.nombre,cliente.fecha_nac,str(cliente.tlf),cliente.correo_electronico)
         console.print(tabla)
-        input()
+        prompt()
     # Funcion para eliminar usuario --------------------------------------------------------------------------------------------------+++++++++++++++++++++
     def eliminar_usuario(self,dni):
         if self.clientes :
             if dni in self.clientes:
                 del self.clientes[dni]
-                prompt("Usuario eliminado correctamente")
+                prompt("Usuario eliminado correctamente",style=style)
             else:
-                prompt("No hay usuarios registrados con ese dni")
+                prompt("No hay usuarios registrados con ese dni",style=style)
 
         else:
-            prompt("No hay usuarios registrados")
+            prompt("No hay usuarios registrados",style=style)
     
 console = Console()
-console.input('Poner en pantalla completa para visualizar correctamete')
+
+
+style = Style.from_dict({
+    'prompt': 'bold fg:#ffb027',
+    '': 'fg:#ffffff'
+})
+prompt('Poner en pantalla completa para visualizar correctamete',style=style)
 system("cls")
+
+
 
 menu="""
 [#7df4f3]
 
                           
-            ▄████████         ▄████████         ▄█   ▄█▄         ▄████████      ███▄▄▄▄           ▄████████ 
-           ███    ███        ███    ███        ███ ▄███▀        ███    ███      ███▀▀▀██▄        ███    ███ 
-           ███    ███        ███    ███        ███▐██▀          ███    ███      ███   ███        ███    ███ 
-           ███    ███       ▄███▄▄▄▄██▀       ▄█████▀           ███    ███      ███   ███        ███    ███ 
-         ▀███████████      ▀▀███▀▀▀▀▀        ▀▀█████▄         ▀███████████      ███   ███      ▀███████████ 
-           ███    ███      ▀███████████        ███▐██▄          ███    ███      ███   ███        ███    ███ 
-           ███    ███        ███    ███        ███ ▀███▄        ███    ███      ███   ███        ███    ███ 
-           ███    █▀         ███    ███        ███   ▀█▀        ███    █▀        ▀█   █▀         ███    █▀  
-                             ███    ███        ▀                                                                                                    
+                                    ▄████████         ▄████████         ▄█   ▄█▄         ▄████████      ███▄▄▄▄           ▄████████ 
+                                   ███    ███        ███    ███        ███ ▄███▀        ███    ███      ███▀▀▀██▄        ███    ███ 
+                                   ███    ███        ███    ███        ███▐██▀          ███    ███      ███   ███        ███    ███ 
+                                   ███    ███       ▄███▄▄▄▄██▀       ▄█████▀           ███    ███      ███   ███        ███    ███ 
+                                 ▀███████████      ▀▀███▀▀▀▀▀        ▀▀█████▄         ▀███████████      ███   ███      ▀███████████ 
+                                   ███    ███      ▀███████████        ███▐██▄          ███    ███      ███   ███        ███    ███ 
+                                   ███    ███        ███    ███        ███ ▀███▄        ███    ███      ███   ███        ███    ███ 
+                                   ███    █▀         ███    ███        ███   ▀█▀        ███    █▀        ▀█   █▀         ███    █▀  
+                                                     ███    ███        ▀                                                                                                    
 [/]                                                                                                                                                                            
 """
 menu2 = """
@@ -370,7 +450,7 @@ menu_principal = Panel(
     expand=True
 )
 #Instanciamos la clase bibloteca
-arcana = Biblioteca()
+arkana = Biblioteca()
 
 # Bucle principal
 def main():
@@ -383,110 +463,161 @@ def main():
                 console.print(titulo)
                 console.print(menu_principal)
                 # Pregutamos que quiere hacer
-                opcion = int(input('Seleciona una opcion: '))
+                opcion = int(prompt('Seleciona una opcion: ',style=style))
                 break
             except:
-                console.input(Panel('Opcion no valida pulsa enter para coninuar',border_style="red"))
+                console.input(Panel('[red]Opcion no valida pulsa enter para coninuar[/]',border_style="red",width=40))
                 continue
 
         if opcion == 1: # Opcion de añadir libro --------------------------------------------------------------------------------------------
             while True:
                 system('cls') # Borramos pantalla
                 try:
-                    console.print('Añadir libro')# Le mostramos en que menu estamos
-                    # Le pedimos todos los datos necesarios
-                    nombre_libro = input('Introduce el nombre del libro: ').capitalize()
-                    editorial = input('Introduce la editorial del libro: ').capitalize()
-                    autor = input('Introduce el autor del libro: ').capitalize()
+                    panel1 = Panel(Align.center('[#90CAF9]\nAñadir libro[/]'),border_style='#90CAF9',width=50,title='Menu para añadir libros')
+                    console.print(panel1)# Le mostramos en que menu estamos
+                    
+                    while True:
+                        # Le pedimos los datos
+                        nombre_libro = prompt('Introduce el nombre del libro: ', style=style).strip().capitalize()
+                        editorial = prompt('Introduce la editorial del libro: ', style=style).strip().capitalize()
+                        autor = prompt('Introduce el autor del libro: ', style=style).strip().capitalize()
+
+                        # Validar que ningún campo esté vacío
+                        if not nombre_libro:
+                            console.print(Panel('[bold red]El nombre del libro no puede estar vacío[/]', border_style='red', width=40))
+                            continue
+                        if not editorial:
+                            console.print(Panel('[bold red]La editorial no puede estar vacía[/]', border_style='red', width=40))
+                            continue
+                        if not autor:
+                            console.print(Panel('[bold red]El autor no puede estar vacío[/]', border_style='red', width=40))
+                            continue
+                        else:
+                            break
 
                     while True:
                         try:
-                            fecha_publi = prompt('Introduce la fecha de publicacion [dia/mes/año]: ')
+                            fecha_publi = prompt('Introduce la fecha de publicacion [dia/mes/año]: ',style=style)
                             datetime.strptime(fecha_publi, '%d/%m/%Y')
                             break
                         except:
                             console.print(Panel("[red]\nFecha inválida[/]",border_style="red"))
                             continue
 
-                    isbn = input('Introduce el ISBN: ')
-                    arcana.añadir_libro(nombre_libro,editorial,autor,fecha_publi,isbn)
-                    break
-                except:
-                    console.input('Has introducido algun dato erroneo\n\nPulsa enter para continuar')
+                    isbn = prompt('Introduce el ISBN: ',style=style)
+                    while True:
+                        if len(isbn) != 10:
+                            console.print(Panel("[bold red]ISBN-tiene que tener 10 numeros[/]", border_style="red", width=50))
+                            continue
+                        else:
+                            break
+                    arkana.añadir_libro(nombre_libro,editorial,autor,fecha_publi,isbn)
+                    
+                except :
+                    console.input(Panel('Has introducido algun dato erroneo\n\nPulsa enter para continuar',border_style='red',width=40))
                     system('cls')
                     continue
                 
 
         elif opcion == 2: # Opcion de prestar libro -----------------------------------------------------------------------------------------
-            console.print('Prestar libro') 
+            system('cls')
+            panel1 = Panel(Align.center('[#90CAF9]\nPrestar libro[/]'),border_style='#90CAF9',width=50,title='Menu para añadir libros')
+            console.print(panel1) 
+
             # Auto completar con el dni de los clientes
-            clientes = WordCompleter(arcana.clientes)
-            dni = prompt('Introduce el dni del cliente para prestar: ',completer=clientes).upper()
-            libros_disponibles = WordCompleter(arcana.libros)
-            nombre_libro = prompt('Introduce el nombre del libro a prestar: ',completer = libros_disponibles)
+            clientes = FuzzyWordCompleter(arkana.clientes)
+            while True:
+                dni = prompt('Introduce el dni del cliente para prestar: ',completer=clientes,style=style).upper()
+                if len(dni) != 9 or not dni[0:8].isdigit() or not dni[8].isalpha():
+                    console.print(Panel("[bold red]DNI inválido. Formato correcto: 12345678A[/]", border_style="red", width=50))
+                    continue
+                else:
+                    break
             
-            arcana.prestar_libro(dni,nombre_libro)
+            libros_disponibles = FuzzyWordCompleter(arkana.libros)
+            nombre_libro = prompt('Introduce el nombre del libro a prestar: ',completer = libros_disponibles,style=style)
+            
+            arkana.prestar_libro(dni,nombre_libro)
+
 
         elif opcion == 3: # Opcion de devolver libro  ---------------------------------------------------------------------------------------
-            console.print('Devolver libro')
-            libros_devolver = WordCompleter(arcana.prestados)
-            nombre_libro = prompt('Introduce el nombre del libro a devolver',completer = libros_devolver).capitalize()
-            arcana.devolver_libro(nombre_libro)
+            panel1 = Panel(Align.center('[#90CAF9]\nDevolver libro[/]'),border_style='#90CAF9',width=50,title='Menu para devolver libros')
+            console.print(panel1)
+            libros_devolver = FuzzyWordCompleter(arkana.prestados)
+            nombre_libro = prompt('Introduce el nombre del libro a devolver',completer = libros_devolver,style=style).capitalize()
+            arkana.devolver_libro(nombre_libro)
 
         elif opcion == 4: # Mostrar libros disponibles ---------------------------------------------------------------------------------------
-            console.print('Mostar libros disponibles') 
-            arcana.mostrar_libros()
+            panel1 = Panel(Align.center('[#90CAF9]\nMostrar libros[/]'),border_style='#90CAF9',width=50,title='Libros disponibles')
+            console.print(panel1)
+            arkana.mostrar_libros()
 
         elif opcion == 5: # Mostrar libros prestado  -----------------------------------------------------------------------------------------
             console.print('Libros prestados')
-            arcana.mostrar_libros_prestados()
+            arkana.mostrar_libros_prestados()
 
         elif opcion == 6: # Registro de usuarios  -----------------------------------------------------------------------------------------
-            console.print('Registrar usuarios')
+            panel1 = Panel(Align.center('[#90CAF9]\nRegistrar usuarios[/]'),border_style='#90CAF9',width=50,title='Registro de usuarios')
+            console.print(panel1)
 
             # Bucle para pedir datos
             while True:
-                try:
-                    dni = input('Introduce el dni del cliente a registrar: ')
-                    nombre = input('Introduce el nombre del cliente a registrar: ').capitalize()
-                    
-                    # Bucele para validar la fecha en el formato correcto
-                    while True:
-                        try:
-                            fecha_nac = input('Introduce la fecha de nacimiento del cliente [dia/mes/año]: ')
-                            datetime.strptime(fecha_nac, '%d/%m/%Y')
-                            
-                            break
-                        except:
-                            print("Fecha inválida")
-                            continue
-
-                    tlf = input('Introduce el numero de telefono del cliente: ')
-                    correo_electronico = input('Introduce el correo electronico del cliente: ')
-                    break
-                except:
-                    console.input("Las datos introducidos no son correctos")
-                    continue
-            arcana.agregar_cliente(dni,nombre,fecha_nac,tlf,correo_electronico)
+                
+                while True:
+                    dni = prompt('Introduce el dni del cliente a registrar: ',style=style).upper()
+                    if len(dni) != 9 or not dni[0:8].isdigit() or not dni[8].isalpha():
+                        console.print(Panel("[bold red]DNI inválido. Formato correcto: 12345678A[/]", border_style="red", width=50))
+                        continue
+                    else:
+                        break
+                nombre = prompt('Introduce el nombre del cliente a registrar: ',style=style).capitalize()
+                
+                # Bucele para validar la fecha en el formato correcto
+                while True:
+                    try:
+                        fecha_nac = prompt('Introduce la fecha de nacimiento del cliente [dia/mes/año]: ',style=style)
+                        datetime.strptime(fecha_nac, '%d/%m/%Y')
+                        
+                        break
+                    except:
+                        console.print("[bold red]Fecha inválida[/]")
+                        continue
+                while True:
+                    tlf = prompt('Introduce el numero de telefono del cliente: ',style=style)
+                    if len(tlf) != 9 or not tlf.isdigit():
+                        console.print(Panel("[bold red]Teléfono inválido. Debe tener 9 dígitos[/]", border_style="red", width=50))
+                        continue
+                    else:
+                        break
+                correo_electronico = prompt('Introduce el correo electronico del cliente: ',style=style)
+                break
+                
+            arkana.agregar_cliente(dni,nombre,fecha_nac,tlf,correo_electronico)
 
         elif opcion == 7: # Mostrar usuarios registrados  ------------------------------------------------------------------------------------
-            console.print('Mostar usuarios registrados')
-            arcana.mostrar_clientes()
-            input()
-
+            # Mostrar clientes
+            arkana.mostrar_clientes()
+            
         elif opcion == 8: # Eliminar usuario  -----------------------------------------------------------------------------------------
-            if arcana.clientes:
-                console.print('Eliminar usuario')
-                console.print("Clientes a eliminar")
-                arcana.mostrar_clientes()
-                eliminar_usuario = WordCompleter(arcana.clientes)
-                dni = prompt("Introduce el DNI del usuario a eliminar: ",completer=eliminar_usuario)
-                arcana.eliminar_usuario(dni)
+            if arkana.clientes:
+                panel1 = Panel(Align.center('[#90CAF9]\nMenu para eliminar usuarios[/]'),border_style='#90CAF9',width=50,title='Eliminar usuario')
+                console.print(panel1)
+                arkana.mostrar_clientes()
+                eliminar_usuario = FuzzyWordCompleter(arkana.clientes)
+                while True:
+                    dni = prompt("Introduce el DNI del usuario a eliminar: ",completer=eliminar_usuario,style=style)
+                    #Validar dni
+                    if len(dni) != 9 or not dni[0:8].isdigit() or not dni[8].isalpha():
+                        console.print(Panel("[bold red]DNI inválido. Formato correcto: 12345678A[/]", border_style="red", width=50))
+                        continue
+                    else:
+                        break
+                arkana.eliminar_usuario(dni)
             else:
-                console.input(Panel("No hay clientes registrados",border_style="yellow",width=30))
+                console.input(Panel("No hay clientes registrados",border_style="fffc27",width=40))
             
         elif opcion == 9: # Salida del programa  -----------------------------------------------------------------------------------------
-            console.input('Muchas gracias por usar el programa')
+            prompt('Muchas gracias por usar el programa',style=style)
             break
 
         
