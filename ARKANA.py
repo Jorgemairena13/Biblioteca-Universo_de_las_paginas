@@ -159,7 +159,7 @@ class Biblioteca():
         tlf="620123789",
         correo_electronico="carlos.ramirez@example.com"
     ),
-    "11223344C": Cliente(
+    "11223344L": Cliente(
         dni="11223344C",
         nombre="Carlos Ramírez",
         fecha_nac="10/12/1995",
@@ -353,7 +353,7 @@ class Biblioteca():
         if dni not in self.clientes:
             self.clientes[dni] = Cliente(dni,nombre,fecha_nac,tlf,correo_electronico)
             system("cls")
-            console.print(f"Usuario {nombre} registrado correctamente")
+            console.print(Panel(f"[#27ff58]Usuario {nombre} registrado correctamente[/]",border_style='#27ff58'))
             prompt("Pulsa enter para continuar",style=style)
             system("cls")
         else:
@@ -504,8 +504,9 @@ def main():
                             console.print(Panel("[red]\nFecha inválida[/]",border_style="red"))
                             continue
 
-                    isbn = prompt('Introduce el ISBN: ',style=style)
+                    
                     while True:
+                        isbn = prompt('Introduce el ISBN: ',style=style)
                         if len(isbn) != 10:
                             console.print(Panel("[bold red]ISBN-tiene que tener 10 numeros[/]", border_style="red", width=50))
                             continue
